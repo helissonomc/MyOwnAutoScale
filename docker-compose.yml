@@ -1,0 +1,37 @@
+version: '3.11'
+services:
+  webapp:
+    build:
+      context: .
+    stdin_open: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - static_volume:/app/mywebproject/static
+      - .:/app
+    command:
+      sh -c "cd mywebproject && 
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8080"
+    networks:
+        - testnet
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - "80:80"  # Map port 80 of the container to port 80 on the host
+    volumes:
+      - static_volume:/mywebproject/static
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro  # Mount custom config
+
+    depends_on:
+      - webapp
+
+    networks:
+      - testnet
+
+volumes:
+  static_volume:
+networks:
+  testnet:

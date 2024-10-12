@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # Get the highest number for autoscale-webapp
-highest=$(docker ps --format "{{.Names}}" | grep "autoscale-webapp" | sed 's/.*-//' | sort -n | tail -1)
+highest=$(docker ps --format "{{.Names}}" | grep "webappname" | sed 's/.*-//' | sort -n | tail -1)
 
 # Increment the highest number by 1
 new_number=$((highest + 1))
 
 # Create the new container name
-new_container_name="autoscale-webapp-$new_number"
+new_container_name="webappname-$new_number"
 new_port=$((8080 + new_number))
 
+network=$(docker ps --format "{{.Networks}}" | tail -1)
+image=$(docker ps --format "{{.Image}}" | grep "webapp" | tail -1)
 # Run the container with the new name (you can adjust the image, command, and options as needed)
-docker run -d --network autoscale_testnet --name "$new_container_name" -p "$new_port:8080" autoscale-webapp bash -c "python mywebproject/manage.py runserver 0.0.0.0:8080"
+docker run -d --network "$network" --name "$new_container_name" -p "$new_port:8080" $image bash -c "python mywebproject/manage.py runserver 0.0.0.0:8080"
 
 echo "Created new container with name: $new_container_name"
 
-
-# Get the list of running autoscale-webapp containers
-containers=$(docker ps --format "{{.Names}}" | grep "autoscale-webapp")
+containers=$(docker ps --format "{{.Names}}" | grep "webapp")
 
 # Generate the upstream block with all running containers
 upstream_block="upstream django_app {\n"

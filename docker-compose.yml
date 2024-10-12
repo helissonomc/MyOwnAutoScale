@@ -1,6 +1,7 @@
 version: '3.11'
 services:
   webapp:
+    container_name: webappname-1
     build:
       context: .
     stdin_open: true

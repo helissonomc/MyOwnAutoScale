@@ -7,10 +7,12 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - static_volume:/app/mywebproject/static
+      - static_volume:/app/static
       - .:/app
     command:
-      sh -c "cd mywebproject && 
+      sh -c "cd mywebproject &&
+            pip install ipdb &&
+             python manage.py collectstatic --noinput &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8080"
     networks:
@@ -22,7 +24,7 @@ services:
     ports:
       - "80:80"  # Map port 80 of the container to port 80 on the host
     volumes:
-      - static_volume:/mywebproject/static
+      - static_volume:/static
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro  # Mount custom config
 
     depends_on:

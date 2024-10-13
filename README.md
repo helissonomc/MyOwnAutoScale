@@ -21,3 +21,11 @@ source ./autoscale.sh
 ```
 curl http://localhost/admin/
 ```
+
+It is possible to run an job that runs the background and monitor the momeory (if can be implemented to check cpu too) and if it was not scaled up in the last 10 minutes and there is any container with the memore above a set number, it will autoscale automatically, but it has a limit of 10 containers, after this it will keep running, but will not increase the number of containers with the webserver:
+```
+chmod +x monitor_memory.sh
+nohup ./monitor_memory.sh & 
+```
+this will make the monitor memory script to run in the background
+

@@ -2,12 +2,15 @@
 
 # Source the Nginx helper file
 source ./nginx_helper.sh
+MAX_CONTAINERS=10
 
 # Function to get the highest number for autoscale-webapp
 get_highest_number() {
     docker ps --format "{{.Names}}" | grep "webappname" | sed 's/.*-//' | sort -n | tail -1
 }
-
+get_current_container_count() {
+    docker ps --format "{{.Names}}" | grep "webappname" | wc -l
+}
 # Function to increment the highest number by 1
 increment_number() {
     local highest=$1
@@ -34,6 +37,15 @@ reload_nginx() {
     docker exec "$nginx_container" nginx -s reload
     echo "Nginx server reloaded"
 }
+
+
+current_container_count=$(get_current_container_count)
+
+if [ "$current_container_count" -ge "$MAX_CONTAINERS" ]; then
+    echo "Maximum container limit of $MAX_CONTAINERS reached. No more autoscaling will occur."
+    exit 0  # Exit without autoscaling
+fi
+
 
 # Main script execution
 highest=$(get_highest_number)

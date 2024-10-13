@@ -17,12 +17,12 @@ generate_upstream_block() {
     fi
 
     upstream_block+="} \n"
-    echo "$upstream_block"
+    echo -e "$upstream_block"
 }
 
 # Function to generate the Nginx server block
 generate_server_block() {
-    echo "
+    echo -e "
 server {
     listen 80;
 
